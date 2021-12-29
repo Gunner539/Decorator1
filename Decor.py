@@ -23,6 +23,7 @@ def logger(path_to_log):
 
                 end = time.time()
                 write_to_file(log_path=path_to_log, log=f'{datetime.today().strftime("%m-%d-%y %H:%M:%S")} | Функция {func.__name__} | Время выполнения: {round(end-start, 0)} секунд | Параметры: {args} | Результат: {"; ".join(res)}')
+                return res
             return do_func
     return decorator
 
@@ -32,6 +33,7 @@ def get_info(KEYWORDS):
 
     KeyWords_string = '|'.join(KEYWORDS)
     pattern = re.compile(KeyWords_string, re.IGNORECASE)
+
 
     res = requests.get(url='https://habr.com/ru/all/')
     res.raise_for_status()
@@ -43,6 +45,10 @@ def get_info(KEYWORDS):
     for article in articles:
 
         article_title = article.find('a', class_='tm-article-snippet__title-link')
+
+        if article_title == None:
+            continue
+
         all_article_text = article_title.text
 
         article_tags = article.find_all('a', class_='tm-article-snippet__hubs-item-link')
@@ -76,4 +82,4 @@ def get_info(KEYWORDS):
 
 if __name__ == '__main__':
     KEYWORDS = ['дизайн', 'фото', 'web', 'python']
-    get_info(KEYWORDS)
+    res = get_info(KEYWORDS)
